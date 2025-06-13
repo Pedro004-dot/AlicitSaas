@@ -1,0 +1,376 @@
+2025-06-13 11:42:59,305 - app - INFO - 🔧 Configurações carregadas do config.env:
+2025-06-13 11:42:59,305 - app - INFO -   - SUPABASE_URL: https://hdlowzlkwrboqfzjewom.supabase.co
+2025-06-13 11:42:59,305 - app - INFO -   - DATABASE_URL: ✅ Configurado
+2025-06-13 11:42:59,305 - app - INFO -   - SUPABASE_SERVICE_KEY: ✅ Configurado
+2025-06-13 11:42:59,305 - app - INFO -   - REDIS_HOST: localhost
+2025-06-13 11:42:59,305 - app - INFO -   - LOG_LEVEL: INFO
+2025-06-13 11:42:59,305 - app - INFO -   - DEBUG: True
+2025-06-13 11:42:59,305 - app - INFO - 🔄 Inicializando DatabaseManager...
+2025-06-13 11:42:59,305 - config.database - INFO - 🔄 Inicializando DatabaseManager simplificado...
+2025-06-13 11:42:59,305 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:42:59,436 - config.database - ERROR - ❌ Erro ao conectar PostgreSQL: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:42:59,436 - config.database - ERROR - Erro na conexão: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:42:59,436 - config.database - ERROR - ❌ Teste inicial falhou: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:42:59,436 - app - ERROR - ❌ ERRO ao inicializar DatabaseManager: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:42:59,436 - app - ERROR - 💡 Verificando possíveis soluções:
+2025-06-13 11:42:59,436 - app - ERROR -    1. Verifique conexão de internet
+2025-06-13 11:42:59,436 - app - ERROR -    2. Verifique se as variáveis DATABASE_URL e SUPABASE_URL estão no config.env
+2025-06-13 11:42:59,436 - app - ERROR -    3. Teste a conectividade com o Supabase
+2025-06-13 11:42:59,436 - app - WARNING - ⚠️ MODO DESENVOLVIMENTO: Iniciando sem banco de dados
+2025-06-13 11:42:59,436 - app - WARNING - 💡 Alguns endpoints que dependem do banco podem falhar
+2025-06-13 11:42:59,436 - app - INFO - 🔄 Inicializando RAGService...
+2025-06-13 11:43:02,495 - config.database - INFO - 🔄 Inicializando DatabaseManager simplificado...
+2025-06-13 11:43:02,495 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:43:02,553 - config.database - ERROR - ❌ Erro ao conectar PostgreSQL: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:02,553 - config.database - ERROR - Erro na conexão: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:02,553 - config.database - ERROR - ❌ Teste inicial falhou: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:02,553 - app - ERROR - ❌ ERRO ao inicializar RAGService: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:02,555 - app - ERROR - Traceback (most recent call last):
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/app.py", line 152, in _initialize_rag_service
+    db_manager = get_db_manager()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 136, in get_db_manager
+    db_manager = DatabaseManager()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 47, in __init__
+    self._test_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 59, in _test_connection
+    raise e
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 52, in _test_connection
+    with self.get_connection() as conn:
+         ~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 69, in get_connection
+    conn = get_db_connection()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 36, in get_db_connection
+    raise e
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 31, in get_db_connection
+    conn = psycopg2.connect(database_url, cursor_factory=DictCursor)
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/venv/lib/python3.13/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+
+2025-06-13 11:43:02,555 - app - WARNING - ⚠️ RAG endpoints estarão desativados.
+2025-06-13 11:43:02,567 - app - WARNING -   ❌ RAG: rotas desativadas devido a erro na inicialização do serviço.
+2025-06-13 11:43:02,567 - app - INFO - 🚀 Aplicação modular inicializada:
+2025-06-13 11:43:02,567 - app - INFO -   ✅ Companies: 8 endpoints (/api/companies/*)
+2025-06-13 11:43:02,567 - app - INFO -   ✅ Bids: 10 endpoints (/api/bids/*)
+2025-06-13 11:43:02,567 - app - INFO -   ✅ Matches: 4 endpoints (/api/matches/*)
+2025-06-13 11:43:02,567 - app - INFO -   ✅ System: 7 endpoints (/api/status/*, /api/config/*, etc)
+2025-06-13 11:43:02,567 - app - INFO -   🆕 Chat: 8 endpoints (/api/licitacoes/*/chat, /api/admin/rag)
+2025-06-13 11:43:02,567 - app - INFO -   📊 TOTAL: 49 endpoints ativos
+2025-06-13 11:43:02,567 - app - INFO - ✅ Todos os blueprints registrados com sucesso!
+2025-06-13 11:43:02,567 - app - INFO - ✅ Error handlers registrados!
+2025-06-13 11:43:02,593 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://10.232.33.242:5002
+2025-06-13 11:43:02,593 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-06-13 11:43:02,594 - werkzeug - INFO -  * Restarting with stat
+2025-06-13 11:43:02,681 - app - INFO - 🔧 Configurações carregadas do config.env:
+2025-06-13 11:43:02,681 - app - INFO -   - SUPABASE_URL: https://hdlowzlkwrboqfzjewom.supabase.co
+2025-06-13 11:43:02,681 - app - INFO -   - DATABASE_URL: ✅ Configurado
+2025-06-13 11:43:02,681 - app - INFO -   - SUPABASE_SERVICE_KEY: ✅ Configurado
+2025-06-13 11:43:02,681 - app - INFO -   - REDIS_HOST: localhost
+2025-06-13 11:43:02,681 - app - INFO -   - LOG_LEVEL: INFO
+2025-06-13 11:43:02,681 - app - INFO -   - DEBUG: True
+2025-06-13 11:43:02,681 - app - INFO - 🔄 Inicializando DatabaseManager...
+2025-06-13 11:43:02,681 - config.database - INFO - 🔄 Inicializando DatabaseManager simplificado...
+2025-06-13 11:43:02,681 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:43:02,758 - config.database - ERROR - ❌ Erro ao conectar PostgreSQL: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:02,758 - config.database - ERROR - Erro na conexão: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:02,758 - config.database - ERROR - ❌ Teste inicial falhou: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:02,758 - app - ERROR - ❌ ERRO ao inicializar DatabaseManager: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:02,758 - app - ERROR - 💡 Verificando possíveis soluções:
+2025-06-13 11:43:02,758 - app - ERROR -    1. Verifique conexão de internet
+2025-06-13 11:43:02,758 - app - ERROR -    2. Verifique se as variáveis DATABASE_URL e SUPABASE_URL estão no config.env
+2025-06-13 11:43:02,758 - app - ERROR -    3. Teste a conectividade com o Supabase
+2025-06-13 11:43:02,758 - app - WARNING - ⚠️ MODO DESENVOLVIMENTO: Iniciando sem banco de dados
+2025-06-13 11:43:02,758 - app - WARNING - 💡 Alguns endpoints que dependem do banco podem falhar
+2025-06-13 11:43:02,758 - app - INFO - 🔄 Inicializando RAGService...
+2025-06-13 11:43:04,748 - config.database - INFO - 🔄 Inicializando DatabaseManager simplificado...
+2025-06-13 11:43:04,748 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:43:04,801 - config.database - ERROR - ❌ Erro ao conectar PostgreSQL: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:04,801 - config.database - ERROR - Erro na conexão: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:04,801 - config.database - ERROR - ❌ Teste inicial falhou: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:04,801 - app - ERROR - ❌ ERRO ao inicializar RAGService: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:43:04,802 - app - ERROR - Traceback (most recent call last):
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/app.py", line 152, in _initialize_rag_service
+    db_manager = get_db_manager()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 136, in get_db_manager
+    db_manager = DatabaseManager()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 47, in __init__
+    self._test_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 59, in _test_connection
+    raise e
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 52, in _test_connection
+    with self.get_connection() as conn:
+         ~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 69, in get_connection
+    conn = get_db_connection()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 36, in get_db_connection
+    raise e
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 31, in get_db_connection
+    conn = psycopg2.connect(database_url, cursor_factory=DictCursor)
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/venv/lib/python3.13/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (52.67.1.88), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+
+2025-06-13 11:43:04,802 - app - WARNING - ⚠️ RAG endpoints estarão desativados.
+2025-06-13 11:43:04,810 - app - WARNING -   ❌ RAG: rotas desativadas devido a erro na inicialização do serviço.
+2025-06-13 11:43:04,810 - app - INFO - 🚀 Aplicação modular inicializada:
+2025-06-13 11:43:04,810 - app - INFO -   ✅ Companies: 8 endpoints (/api/companies/*)
+2025-06-13 11:43:04,810 - app - INFO -   ✅ Bids: 10 endpoints (/api/bids/*)
+2025-06-13 11:43:04,810 - app - INFO -   ✅ Matches: 4 endpoints (/api/matches/*)
+2025-06-13 11:43:04,810 - app - INFO -   ✅ System: 7 endpoints (/api/status/*, /api/config/*, etc)
+2025-06-13 11:43:04,810 - app - INFO -   🆕 Chat: 8 endpoints (/api/licitacoes/*/chat, /api/admin/rag)
+2025-06-13 11:43:04,810 - app - INFO -   📊 TOTAL: 49 endpoints ativos
+2025-06-13 11:43:04,810 - app - INFO - ✅ Todos os blueprints registrados com sucesso!
+2025-06-13 11:43:04,811 - app - INFO - ✅ Error handlers registrados!
+2025-06-13 11:43:04,827 - werkzeug - WARNING -  * Debugger is active!
+2025-06-13 11:43:04,838 - werkzeug - INFO -  * Debugger PIN: 682-674-728
+2025-06-13 11:45:26,892 - werkzeug - INFO -  * Detected change in '/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/test_connection.py', reloading
+2025-06-13 11:45:27,387 - werkzeug - INFO -  * Restarting with stat
+2025-06-13 11:45:27,473 - app - INFO - 🔧 Configurações carregadas do config.env:
+2025-06-13 11:45:27,473 - app - INFO -   - SUPABASE_URL: https://hdlowzlkwrboqfzjewom.supabase.co
+2025-06-13 11:45:27,473 - app - INFO -   - DATABASE_URL: ✅ Configurado
+2025-06-13 11:45:27,473 - app - INFO -   - SUPABASE_SERVICE_KEY: ✅ Configurado
+2025-06-13 11:45:27,473 - app - INFO -   - REDIS_HOST: localhost
+2025-06-13 11:45:27,473 - app - INFO -   - LOG_LEVEL: INFO
+2025-06-13 11:45:27,473 - app - INFO -   - DEBUG: True
+2025-06-13 11:45:27,473 - app - INFO - 🔄 Inicializando DatabaseManager...
+2025-06-13 11:45:27,473 - config.database - INFO - 🔄 Inicializando DatabaseManager simplificado...
+2025-06-13 11:45:27,473 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:45:27,683 - config.database - ERROR - ❌ Erro ao conectar PostgreSQL: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:45:27,683 - config.database - ERROR - Erro na conexão: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:45:27,683 - config.database - ERROR - ❌ Teste inicial falhou: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:45:27,683 - app - ERROR - ❌ ERRO ao inicializar DatabaseManager: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:45:27,683 - app - ERROR - 💡 Verificando possíveis soluções:
+2025-06-13 11:45:27,683 - app - ERROR -    1. Verifique conexão de internet
+2025-06-13 11:45:27,683 - app - ERROR -    2. Verifique se as variáveis DATABASE_URL e SUPABASE_URL estão no config.env
+2025-06-13 11:45:27,683 - app - ERROR -    3. Teste a conectividade com o Supabase
+2025-06-13 11:45:27,683 - app - WARNING - ⚠️ MODO DESENVOLVIMENTO: Iniciando sem banco de dados
+2025-06-13 11:45:27,683 - app - WARNING - 💡 Alguns endpoints que dependem do banco podem falhar
+2025-06-13 11:45:27,683 - app - INFO - 🔄 Inicializando RAGService...
+2025-06-13 11:45:29,608 - config.database - INFO - 🔄 Inicializando DatabaseManager simplificado...
+2025-06-13 11:45:29,608 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:45:29,674 - config.database - ERROR - ❌ Erro ao conectar PostgreSQL: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:45:29,674 - config.database - ERROR - Erro na conexão: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:45:29,674 - config.database - ERROR - ❌ Teste inicial falhou: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:45:29,675 - app - ERROR - ❌ ERRO ao inicializar RAGService: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-06-13 11:45:29,675 - app - ERROR - Traceback (most recent call last):
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/app.py", line 152, in _initialize_rag_service
+    db_manager = get_db_manager()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 136, in get_db_manager
+    db_manager = DatabaseManager()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 47, in __init__
+    self._test_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 59, in _test_connection
+    raise e
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 52, in _test_connection
+    with self.get_connection() as conn:
+         ~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 69, in get_connection
+    conn = get_db_connection()
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 36, in get_db_connection
+    raise e
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/src/config/database.py", line 31, in get_db_connection
+    conn = psycopg2.connect(database_url, cursor_factory=DictCursor)
+  File "/Users/pedrotorrezani/Documents/Programacao/alicitSAAS/backend/venv/lib/python3.13/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "aws-0-sa-east-1.pooler.supabase.com" (15.229.150.166), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+
+2025-06-13 11:45:29,675 - app - WARNING - ⚠️ RAG endpoints estarão desativados.
+2025-06-13 11:45:29,683 - app - WARNING -   ❌ RAG: rotas desativadas devido a erro na inicialização do serviço.
+2025-06-13 11:45:29,683 - app - INFO - 🚀 Aplicação modular inicializada:
+2025-06-13 11:45:29,683 - app - INFO -   ✅ Companies: 8 endpoints (/api/companies/*)
+2025-06-13 11:45:29,683 - app - INFO -   ✅ Bids: 10 endpoints (/api/bids/*)
+2025-06-13 11:45:29,683 - app - INFO -   ✅ Matches: 4 endpoints (/api/matches/*)
+2025-06-13 11:45:29,683 - app - INFO -   ✅ System: 7 endpoints (/api/status/*, /api/config/*, etc)
+2025-06-13 11:45:29,683 - app - INFO -   🆕 Chat: 8 endpoints (/api/licitacoes/*/chat, /api/admin/rag)
+2025-06-13 11:45:29,683 - app - INFO -   📊 TOTAL: 49 endpoints ativos
+2025-06-13 11:45:29,683 - app - INFO - ✅ Todos os blueprints registrados com sucesso!
+2025-06-13 11:45:29,684 - app - INFO - ✅ Error handlers registrados!
+2025-06-13 11:45:29,700 - werkzeug - WARNING -  * Debugger is active!
+2025-06-13 11:45:29,710 - werkzeug - INFO -  * Debugger PIN: 682-674-728
+2025-06-13 11:47:49,982 - app - INFO - 🔧 Configurações carregadas do config.env:
+2025-06-13 11:47:49,982 - app - INFO -   - SUPABASE_URL: https://hdlowzlkwrboqfzjewom.supabase.co
+2025-06-13 11:47:49,982 - app - INFO -   - DATABASE_URL: ✅ Configurado
+2025-06-13 11:47:49,982 - app - INFO -   - SUPABASE_SERVICE_KEY: ✅ Configurado
+2025-06-13 11:47:49,982 - app - INFO -   - REDIS_HOST: localhost
+2025-06-13 11:47:49,982 - app - INFO -   - LOG_LEVEL: INFO
+2025-06-13 11:47:49,982 - app - INFO -   - DEBUG: True
+2025-06-13 11:47:49,982 - app - INFO - 🔄 Inicializando DatabaseManager...
+2025-06-13 11:47:49,982 - config.database - INFO - 🔄 Inicializando DatabaseManager simplificado...
+2025-06-13 11:47:49,982 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:47:50,061 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:47:50,077 - config.database - INFO - ✅ Teste inicial OK - DB: postgres
+2025-06-13 11:47:50,085 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:47:50,133 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:47:50,161 - app - INFO - ✅ DatabaseManager inicializado com sucesso!
+2025-06-13 11:47:50,161 - app - INFO - 🔗 PostgreSQL: healthy
+2025-06-13 11:47:50,161 - app - INFO - 🔄 Inicializando RAGService...
+2025-06-13 11:47:53,076 - core.unified_document_processor - WARNING - ⚠️ Erro ao verificar bucket (pode já existir): 'dict' object has no attribute 'name'
+2025-06-13 11:47:53,076 - rag.embedding_service - INFO - 🤖 Carregando modelo: sentence-transformers/all-MiniLM-L6-v2
+2025-06-13 11:47:53,076 - rag.embedding_service - INFO - 🔧 Usando device: cpu
+2025-06-13 11:47:53,077 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-13 11:47:55,422 - rag.embedding_service - INFO - ✅ Modelo carregado com sucesso
+2025-06-13 11:47:55,424 - rag.cache_manager - INFO - ✅ Redis conectado com sucesso
+2025-06-13 11:47:55,452 - rag.retrieval_engine - INFO - 🤖 Carregando modelo de reranking...
+2025-06-13 11:47:56,750 - sentence_transformers.cross_encoder.CrossEncoder - INFO - Use pytorch device: mps
+2025-06-13 11:47:57,455 - rag.retrieval_engine - INFO - ✅ Modelo de reranking carregado
+2025-06-13 11:47:57,455 - services.rag_service - INFO - ✅ RAGService inicializado
+2025-06-13 11:47:57,455 - app - INFO - ✅ RAGService inicializado com sucesso!
+2025-06-13 11:47:57,468 - app - INFO -   ✅ RAG: 4 endpoints (/api/rag/*)
+2025-06-13 11:47:57,468 - app - INFO - 🚀 Aplicação modular inicializada:
+2025-06-13 11:47:57,468 - app - INFO -   ✅ Companies: 8 endpoints (/api/companies/*)
+2025-06-13 11:47:57,468 - app - INFO -   ✅ Bids: 10 endpoints (/api/bids/*)
+2025-06-13 11:47:57,468 - app - INFO -   ✅ Matches: 4 endpoints (/api/matches/*)
+2025-06-13 11:47:57,468 - app - INFO -   ✅ System: 7 endpoints (/api/status/*, /api/config/*, etc)
+2025-06-13 11:47:57,468 - app - INFO -   🆕 Chat: 8 endpoints (/api/licitacoes/*/chat, /api/admin/rag)
+2025-06-13 11:47:57,468 - app - INFO -   📊 TOTAL: 49 endpoints ativos
+2025-06-13 11:47:57,468 - app - INFO - ✅ Todos os blueprints registrados com sucesso!
+2025-06-13 11:47:57,469 - app - INFO - ✅ Error handlers registrados!
+2025-06-13 11:47:57,483 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://10.232.33.242:5002
+2025-06-13 11:47:57,483 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-06-13 11:47:57,483 - werkzeug - INFO -  * Restarting with stat
+2025-06-13 11:47:57,575 - app - INFO - 🔧 Configurações carregadas do config.env:
+2025-06-13 11:47:57,575 - app - INFO -   - SUPABASE_URL: https://hdlowzlkwrboqfzjewom.supabase.co
+2025-06-13 11:47:57,575 - app - INFO -   - DATABASE_URL: ✅ Configurado
+2025-06-13 11:47:57,576 - app - INFO -   - SUPABASE_SERVICE_KEY: ✅ Configurado
+2025-06-13 11:47:57,576 - app - INFO -   - REDIS_HOST: localhost
+2025-06-13 11:47:57,576 - app - INFO -   - LOG_LEVEL: INFO
+2025-06-13 11:47:57,576 - app - INFO -   - DEBUG: True
+2025-06-13 11:47:57,576 - app - INFO - 🔄 Inicializando DatabaseManager...
+2025-06-13 11:47:57,576 - config.database - INFO - 🔄 Inicializando DatabaseManager simplificado...
+2025-06-13 11:47:57,576 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:47:57,650 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:47:57,665 - config.database - INFO - ✅ Teste inicial OK - DB: postgres
+2025-06-13 11:47:57,675 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:47:57,734 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:47:57,760 - app - INFO - ✅ DatabaseManager inicializado com sucesso!
+2025-06-13 11:47:57,760 - app - INFO - 🔗 PostgreSQL: healthy
+2025-06-13 11:47:57,760 - app - INFO - 🔄 Inicializando RAGService...
+2025-06-13 11:47:59,863 - core.unified_document_processor - WARNING - ⚠️ Erro ao verificar bucket (pode já existir): 'dict' object has no attribute 'name'
+2025-06-13 11:47:59,863 - rag.embedding_service - INFO - 🤖 Carregando modelo: sentence-transformers/all-MiniLM-L6-v2
+2025-06-13 11:47:59,863 - rag.embedding_service - INFO - 🔧 Usando device: cpu
+2025-06-13 11:47:59,864 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-13 11:48:02,012 - rag.embedding_service - INFO - ✅ Modelo carregado com sucesso
+2025-06-13 11:48:02,013 - rag.cache_manager - INFO - ✅ Redis conectado com sucesso
+2025-06-13 11:48:02,036 - rag.retrieval_engine - INFO - 🤖 Carregando modelo de reranking...
+2025-06-13 11:48:03,165 - sentence_transformers.cross_encoder.CrossEncoder - INFO - Use pytorch device: mps
+2025-06-13 11:48:03,903 - rag.retrieval_engine - INFO - ✅ Modelo de reranking carregado
+2025-06-13 11:48:03,903 - services.rag_service - INFO - ✅ RAGService inicializado
+2025-06-13 11:48:03,903 - app - INFO - ✅ RAGService inicializado com sucesso!
+2025-06-13 11:48:03,912 - app - INFO -   ✅ RAG: 4 endpoints (/api/rag/*)
+2025-06-13 11:48:03,912 - app - INFO - 🚀 Aplicação modular inicializada:
+2025-06-13 11:48:03,912 - app - INFO -   ✅ Companies: 8 endpoints (/api/companies/*)
+2025-06-13 11:48:03,912 - app - INFO -   ✅ Bids: 10 endpoints (/api/bids/*)
+2025-06-13 11:48:03,912 - app - INFO -   ✅ Matches: 4 endpoints (/api/matches/*)
+2025-06-13 11:48:03,912 - app - INFO -   ✅ System: 7 endpoints (/api/status/*, /api/config/*, etc)
+2025-06-13 11:48:03,912 - app - INFO -   🆕 Chat: 8 endpoints (/api/licitacoes/*/chat, /api/admin/rag)
+2025-06-13 11:48:03,912 - app - INFO -   📊 TOTAL: 49 endpoints ativos
+2025-06-13 11:48:03,912 - app - INFO - ✅ Todos os blueprints registrados com sucesso!
+2025-06-13 11:48:03,912 - app - INFO - ✅ Error handlers registrados!
+2025-06-13 11:48:03,923 - werkzeug - WARNING -  * Debugger is active!
+2025-06-13 11:48:03,934 - werkzeug - INFO -  * Debugger PIN: 682-674-728
+2025-06-13 11:48:18,764 - middleware.error_handler - INFO - 🚀 GET /api/bids
+2025-06-13 11:48:18,764 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,765 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,765 - middleware.error_handler - INFO - 🚀 GET /api/status/daily-bids
+2025-06-13 11:48:18,765 - middleware.error_handler - INFO - ✅ GET /api/status/daily-bids - 0.000s
+2025-06-13 11:48:18,765 - middleware.error_handler - INFO - 🚀 GET /api/status/reevaluate
+2025-06-13 11:48:18,766 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/status/daily-bids HTTP/1.1" 200 -
+2025-06-13 11:48:18,767 - controllers.match_controller - INFO - 🔍 Buscando 5 matches mais recentes
+2025-06-13 11:48:18,767 - middleware.error_handler - INFO - ✅ GET /api/status/reevaluate - 0.001s
+2025-06-13 11:48:18,767 - middleware.error_handler - INFO - 🚀 GET /api/bids/active
+2025-06-13 11:48:18,767 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,767 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/status/reevaluate HTTP/1.1" 200 -
+2025-06-13 11:48:18,768 - controllers.bid_controller - INFO - 🔍 Buscando licitações ativas após 2025-06-13, limite: 100
+2025-06-13 11:48:18,768 - controllers.match_controller - INFO - 🔍 Listando matches - limite 50
+2025-06-13 11:48:18,768 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,768 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,769 - middleware.error_handler - INFO - 🚀 GET /api/status/daily-bids
+2025-06-13 11:48:18,769 - middleware.error_handler - INFO - ✅ GET /api/status/daily-bids - 0.000s
+2025-06-13 11:48:18,769 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/status/daily-bids HTTP/1.1" 200 -
+2025-06-13 11:48:18,770 - middleware.error_handler - INFO - 🚀 GET /api/status/reevaluate
+2025-06-13 11:48:18,770 - middleware.error_handler - INFO - ✅ GET /api/status/reevaluate - 0.000s
+2025-06-13 11:48:18,771 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/status/reevaluate HTTP/1.1" 200 -
+2025-06-13 11:48:18,819 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:18,826 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:18,829 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:18,831 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:18,840 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:18,875 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/companies HTTP/1.1" 200 -
+2025-06-13 11:48:18,876 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,911 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/matches/recent?limit=5 HTTP/1.1" 200 -
+2025-06-13 11:48:18,912 - controllers.match_controller - INFO - 🔍 Buscando 5 matches mais recentes
+2025-06-13 11:48:18,912 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,913 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/matches/ HTTP/1.1" 200 -
+2025-06-13 11:48:18,913 - controllers.match_controller - INFO - 🔍 Listando matches - limite 50
+2025-06-13 11:48:18,913 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,928 - middleware.error_handler - INFO - ✅ GET /api/bids - 0.165s
+2025-06-13 11:48:18,929 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/bids HTTP/1.1" 200 -
+2025-06-13 11:48:18,930 - middleware.error_handler - INFO - 🚀 GET /api/bids
+2025-06-13 11:48:18,930 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,932 - middleware.error_handler - INFO - ✅ GET /api/bids/active - 0.165s
+2025-06-13 11:48:18,932 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/bids/active?after=2025-06-13 HTTP/1.1" 200 -
+2025-06-13 11:48:18,932 - controllers.match_controller - INFO - 🔍 Buscando matches agrupados por empresa
+2025-06-13 11:48:18,932 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,933 - middleware.error_handler - INFO - 🚀 GET /api/bids/active
+2025-06-13 11:48:18,933 - controllers.bid_controller - INFO - 🔍 Buscando licitações ativas após 2025-06-13, limite: 100
+2025-06-13 11:48:18,933 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:18,950 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:18,980 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:18,984 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:18,993 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:18] "GET /api/companies HTTP/1.1" 200 -
+2025-06-13 11:48:18,997 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:19,008 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:19,016 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:19] "GET /api/matches/recent?limit=5 HTTP/1.1" 200 -
+2025-06-13 11:48:19,016 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:19] "GET /api/matches/ HTTP/1.1" 200 -
+2025-06-13 11:48:19,017 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:19,044 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:19] "GET /api/matches/by-company HTTP/1.1" 200 -
+2025-06-13 11:48:19,045 - controllers.match_controller - INFO - 🔍 Buscando matches agrupados por empresa
+2025-06-13 11:48:19,045 - config.database - INFO - ✅ Usando DATABASE_URL do ambiente
+2025-06-13 11:48:19,050 - middleware.error_handler - INFO - ✅ GET /api/bids - 0.120s
+2025-06-13 11:48:19,050 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:19] "GET /api/bids HTTP/1.1" 200 -
+2025-06-13 11:48:19,085 - middleware.error_handler - INFO - ✅ GET /api/bids/active - 0.152s
+2025-06-13 11:48:19,085 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:19] "GET /api/bids/active?after=2025-06-13 HTTP/1.1" 200 -
+2025-06-13 11:48:19,104 - config.database - INFO - ✅ Conexão PostgreSQL estabelecida com sucesso
+2025-06-13 11:48:19,127 - werkzeug - INFO - 127.0.0.1 - - [13/Jun/2025 11:48:19] "GET /api/matches/by-company HTTP/1.1" 200 -
