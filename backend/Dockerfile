@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y \
 # Definir diretório de trabalho
 WORKDIR /app
 
+# Configurar PYTHONPATH para incluir src
+ENV PYTHONPATH="${PYTHONPATH}:/app/src"
+
 # Copiar requirements primeiro (para cache de layers)
 COPY requirements.txt .
 
