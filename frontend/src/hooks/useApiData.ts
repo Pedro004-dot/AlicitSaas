@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Bid, Company, Match, CompanyMatch, Status, ApiResponse } from '../types';
+import { config } from '../config/environment';
 
 interface LoadingState {
   bids: boolean;
@@ -22,8 +23,6 @@ interface ApiDataHook {
   loadStatus: () => Promise<void>;
   setLoading: (key: keyof LoadingState, value: boolean) => void;
 }
-
-import { config } from '../config/environment';
 
 const API_BASE_URL = config.API_BASE_URL;
 
