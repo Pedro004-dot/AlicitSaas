@@ -135,16 +135,48 @@ def _initialize_database(app: Flask) -> None:
         app.logger.warning("💡 Alguns endpoints que dependem do banco podem falhar")
 
 def _initialize_rag_service(app: Flask) -> None:
-    """Inicializar o Serviço RAG e seus componentes"""
+    """Preparar RAG Service para inicialização lazy (sob demanda)"""
     try:
-        app.logger.info("🔄 Inicializando RAGService...")
+        app.logger.info("🔄 Preparando RAGService para inicialização lazy...")
         
         # 1. Validar pré-requisitos (OpenAI API Key)
         openai_api_key = app.config.get('OPENAI_API_KEY')
         if not openai_api_key:
-            raise ValueError("❌ OPENAI_API_KEY não encontrada nas configurações. O serviço RAG não pode ser iniciado.")
+            app.logger.warning("❌ OPENAI_API_KEY não encontrada. RAG será inicializado sob demanda.")
+            app.rag_service = None
+            return
 
-        # 2. Importar e inicializar componentes
+        # 2. Armazenar configurações para inicialização lazy
+        app.rag_config = {
+            'openai_api_key': openai_api_key,
+            'supabase_url': app.config.get('SUPABASE_URL'),
+            'supabase_key': app.config.get('SUPABASE_SERVICE_KEY'),
+            'redis_host': app.config.get('REDIS_HOST', 'localhost')
+        }
+        
+        # 3. Marcar que RAG está pronto para ser inicializado
+        app.rag_service = None  # Será inicializado na primeira chamada
+        app.rag_initialized = False
+        app.logger.info("✅ RAGService configurado para inicialização lazy!")
+        
+    except Exception as e:
+        app.logger.error(f"❌ ERRO ao preparar RAGService: {e}")
+        app.logger.warning("⚠️ RAG endpoints estarão desativados.")
+        app.rag_service = None
+        app.rag_initialized = False
+
+def get_rag_service(app):
+    """Inicializar RAG service sob demanda (lazy loading)"""
+    if hasattr(app, 'rag_initialized') and app.rag_initialized:
+        return getattr(app, 'rag_service', None)
+    
+    if not hasattr(app, 'rag_config'):
+        return None
+        
+    try:
+        app.logger.info("🔄 Inicializando RAGService sob demanda...")
+        
+        # Importar e inicializar componentes pesados agora
         from services.rag_service import RAGService
         from config.database import get_db_manager
         from core.unified_document_processor import UnifiedDocumentProcessor
@@ -152,27 +184,28 @@ def _initialize_rag_service(app: Flask) -> None:
         db_manager = get_db_manager()
         unified_processor = UnifiedDocumentProcessor(
             db_manager=db_manager,
-            supabase_url=app.config.get('SUPABASE_URL'),
-            supabase_key=app.config.get('SUPABASE_SERVICE_KEY')
+            supabase_url=app.rag_config['supabase_url'],
+            supabase_key=app.rag_config['supabase_key']
         )
 
-        # 3. Criar a instância do serviço
+        # Criar a instância do serviço
         rag_service = RAGService(
             db_manager=db_manager,
             unified_processor=unified_processor,
-            openai_api_key=openai_api_key,
-            redis_host=app.config.get('REDIS_HOST', 'localhost')
+            openai_api_key=app.rag_config['openai_api_key'],
+            redis_host=app.rag_config['redis_host']
         )
         
-        # Anexar à aplicação para ser acessível em outros lugares
         app.rag_service = rag_service
-        app.logger.info("✅ RAGService inicializado com sucesso!")
+        app.rag_initialized = True
+        app.logger.info("✅ RAGService inicializado sob demanda!")
+        return rag_service
         
     except Exception as e:
-        app.logger.error(f"❌ ERRO ao inicializar RAGService: {e}")
-        app.logger.error(traceback.format_exc())
-        app.logger.warning("⚠️ RAG endpoints estarão desativados.")
+        app.logger.error(f"❌ ERRO ao inicializar RAGService sob demanda: {e}")
         app.rag_service = None
+        app.rag_initialized = False
+        return None
 
 def _setup_cors(app: Flask) -> None:
     """Configurar CORS para permitir requisições do frontend"""
@@ -205,13 +238,15 @@ def _register_blueprints(app: Flask) -> None:
     
         app.register_blueprint(system_routes)
         
-        # Registrar rotas RAG se o serviço foi inicializado
-        if hasattr(app, 'rag_service') and app.rag_service:
-            rag_bp = create_rag_routes(app.rag_service)
+        # Registrar rotas RAG com lazy loading
+        if hasattr(app, 'rag_config'):
+            # Criar blueprint que usa lazy loading
+            from routes.rag_routes import create_rag_routes_lazy
+            rag_bp = create_rag_routes_lazy()
             app.register_blueprint(rag_bp)
-            app.logger.info("  ✅ RAG: 4 endpoints (/api/rag/*)")
+            app.logger.info("  ✅ RAG: 4 endpoints (/api/rag/*) - lazy loading")
         else:
-            app.logger.warning("  ❌ RAG: rotas desativadas devido a erro na inicialização do serviço.")
+            app.logger.warning("  ❌ RAG: rotas desativadas devido a configuração insuficiente.")
         
         
         # Log resumo
