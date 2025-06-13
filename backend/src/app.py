@@ -212,9 +212,13 @@ def _setup_cors(app: Flask) -> None:
     # Configurar trailing slashes para evitar redirects 308
     app.url_map.strict_slashes = False
     
+    # Usar origens configuradas nas variáveis de ambiente
+    cors_origins = app.config.get('CORS_ORIGINS', ['*'])
+    app.logger.info(f"🔒 CORS configurado para origens: {cors_origins}")
+    
     CORS(app, resources={
         r"/api/*": {
-            "origins": ['*'],
+            "origins": cors_origins,
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"]
         }

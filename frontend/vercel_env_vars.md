@@ -4,7 +4,7 @@
 
 ### 🔗 Conexão com Backend
 ```bash
-REACT_APP_API_BASE_URL=https://seu-app-backend.herokuapp.com/api
+REACT_APP_API_BASE_URL=https://alicit-backend-api-095d49caff4b.herokuapp.com/api
 ```
 
 ### 📋 Opcionais (Informações da App)
@@ -23,7 +23,7 @@ NODE_ENV=production
 
 ## ⚠️ Importante
 
-- **REACT_APP_API_BASE_URL**: Atualize com a URL real do Heroku após o deploy
+- **REACT_APP_API_BASE_URL**: ✅ **JÁ CONFIGURADO** com `https://alicit-backend-api-095d49caff4b.herokuapp.com/api`
 - **Formato**: Deve terminar com `/api` (sem barra final)
 - **HTTPS**: Use sempre HTTPS em produção
 
