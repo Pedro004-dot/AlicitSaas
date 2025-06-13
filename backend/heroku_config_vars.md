@@ -4,7 +4,7 @@
 
 ### 🔐 Segurança & Framework
 ```bash
-SECRET_KEY=sua-chave-secreta-super-segura-aqui-mude-em-producao
+SECRET_KEY=laewhvbwlhakldlh
 FLASK_ENV=production
 FLASK_DEBUG=False
 ```
@@ -25,16 +25,18 @@ OPENAI_API_KEY=sua-openai-api-key-aqui
 **⚠️ IMPORTANTE**: As chaves de API devem ser obtidas dos respectivos serviços:
 - OpenAI: https://platform.openai.com/api-keys
 
-### 🌐 CORS - MAIS IMPORTANTE!
+### 🌐 CORS - CONFIGURAÇÃO PARA VERCEL
 ```bash
-# 🔥 ATUALIZE APÓS DEPLOY DA VERCEL COM AS URLs REAIS
-CORS_ORIGINS=https://seu-frontend.vercel.app,https://www.seu-frontend.vercel.app
+# URLs do Frontend Vercel (OBRIGATÓRIO)
+CORS_ORIGINS=https://alicit-saas.vercel.app,https://www.alicit-saas.vercel.app
 ```
 
-### 📊 Cache & Performance
+### 📊 Cache & Performance - Redis Railway
 ```bash
-REDIS_HOST=localhost
-REDIS_PORT=6379
+# Configurações do Redis (Railway)
+REDIS_HOST=seu-redis-host-railway
+REDIS_PORT=sua-porta-railway
+REDIS_PASSWORD=sua-senha-railway
 REDIS_DB=0
 LOG_LEVEL=INFO
 ```
