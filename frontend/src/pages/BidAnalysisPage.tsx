@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BidDetail } from '../types';
 import { FileText } from 'lucide-react';
+import { config } from '../config/environment';
 
 interface ChatMessage {
   id: string;
@@ -78,7 +79,7 @@ const BidAnalysisPage: React.FC = () => {
     setError(null);
     
     try {
-      const response = await fetch(`http://localhost:5002/api/bids/detail?pncp_id=${encodeURIComponent(pncp_id)}`);
+      const response = await fetch(`${config.API_BASE_URL}/bids/detail?pncp_id=${encodeURIComponent(pncp_id)}`);
       if (!response.ok) {
         throw new Error('Falha ao carregar detalhes da licitação');
       }
@@ -103,7 +104,7 @@ const BidAnalysisPage: React.FC = () => {
       }
       
       console.log('🔍 Buscando documentos para licitacao_id:', licitacao_id);
-      const res = await fetch(`http://localhost:5002/api/bids/documents?licitacao_id=${licitacao_id}`);
+      const res = await fetch(`${config.API_BASE_URL}/bids/documents?licitacao_id=${licitacao_id}`);
       
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
@@ -160,7 +161,7 @@ const BidAnalysisPage: React.FC = () => {
     setChatLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5002/api/rag/analisarDocumentos', {
+      const response = await fetch(`${config.API_BASE_URL}/rag/analisarDocumentos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

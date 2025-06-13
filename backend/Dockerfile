@@ -9,7 +9,12 @@ RUN apt-get update && apt-get install -y \
     libmagic1 \
     libmagic-dev \
     file \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
+
+# Configurar variáveis de ambiente para libmagic
+ENV MAGIC_MIME="/usr/share/misc/magic"
+ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
 
 # Definir diretório de trabalho
 WORKDIR /app

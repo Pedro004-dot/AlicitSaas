@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BidDetail, BidItem } from '../../types';
 import { formatCurrency, formatDate } from '../../utils';
+import { config } from '../../config/environment';
 
 interface BidDetailModalProps {
   isOpen: boolean;
@@ -100,7 +101,7 @@ const BidDetailModal: React.FC<BidDetailModalProps> = ({ isOpen, onClose, pncp_i
     
     try {
       // Usar query parameter ao invés de path parameter para evitar problemas com "/" no pncp_id
-      const response = await fetch(`http://localhost:5002/api/bids/detail?pncp_id=${encodeURIComponent(pncp_id)}`);
+      const response = await fetch(`${config.API_BASE_URL}/bids/detail?pncp_id=${encodeURIComponent(pncp_id)}`);
       if (!response.ok) {
         throw new Error('Falha ao carregar detalhes da licitação');
       }
@@ -108,7 +109,7 @@ const BidDetailModal: React.FC<BidDetailModalProps> = ({ isOpen, onClose, pncp_i
       setBidDetail(data.data); // Note que a resposta vem em data.data
       
       // Buscar itens também - usando query parameter para evitar problemas com "/" no pncp_id
-      const itemsResponse = await fetch(`http://localhost:5002/api/bids/items?pncp_id=${encodeURIComponent(pncp_id)}`);
+      const itemsResponse = await fetch(`${config.API_BASE_URL}/bids/items?pncp_id=${encodeURIComponent(pncp_id)}`);
       if (itemsResponse.ok) {
         const itemsData = await itemsResponse.json();
         setBidItems(itemsData.data || []); // Note que a resposta vem em data.data
@@ -132,7 +133,7 @@ const BidDetailModal: React.FC<BidDetailModalProps> = ({ isOpen, onClose, pncp_i
       console.log('🚀 Iniciando análise sequencial...');
       
       const iniciarResponse = await fetch(
-        `http://localhost:5002/api/licitacoes/${bidDetail.id}/analisar`, 
+        `${config.API_BASE_URL}/licitacoes/${bidDetail.id}/analisar`, 
         { method: 'POST' }
       );
       
@@ -166,7 +167,7 @@ const BidDetailModal: React.FC<BidDetailModalProps> = ({ isOpen, onClose, pncp_i
         attempts++;
         console.log(`📊 Polling tentativa ${attempts}/${maxAttempts}...`);
         
-        const response = await fetch(`http://localhost:5002/api/licitacoes/${bidDetail.id}/checklist`);
+        const response = await fetch(`${config.API_BASE_URL}/licitacoes/${bidDetail.id}/checklist`);
         const data: ChecklistResponse = await response.json();
         
         if (data.success) {

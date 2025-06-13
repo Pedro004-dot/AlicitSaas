@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
+import { config } from '../config/environment';
 
 interface StatusData {
   running: boolean;
@@ -17,8 +18,8 @@ const StatusDebug: React.FC = () => {
     setLoading(true);
     try {
       const [searchRes, reevalRes] = await Promise.all([
-        fetch('http://localhost:5002/api/status/daily-bids'),
-        fetch('http://localhost:5002/api/status/reevaluate')
+        fetch(`${config.API_BASE_URL}/status/daily-bids`),
+        fetch(`${config.API_BASE_URL}/status/reevaluate`)
       ]);
 
       const searchData = await searchRes.json();

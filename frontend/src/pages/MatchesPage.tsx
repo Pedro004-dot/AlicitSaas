@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Building, FileText, Eye, X, MapPin, DollarSign, ArrowLeft, Users, Award, Target, Search, RefreshCw, CheckCircle, AlertCircle, Clock } from 'lucide-react';
+import { config } from '../config/environment';
 
 // Reutilizando as interfaces da SearchPage
 interface LicitacaoItem {
@@ -119,7 +120,7 @@ const MatchesPage: React.FC = () => {
           // Verificar status da busca
           if (searchingNewBids) {
             console.log('Verificando status da busca...');
-            const searchResponse = await fetch('http://localhost:5002/api/status/daily-bids');
+            const searchResponse = await fetch(`${config.API_BASE_URL}/status/daily-bids`);
             const searchData = await searchResponse.json();
             
             console.log('Status da busca:', searchData);
@@ -152,7 +153,7 @@ const MatchesPage: React.FC = () => {
           // Verificar status da reavaliação
           if (reevaluatingBids) {
             console.log('Verificando status da reavaliação...');
-            const reevalResponse = await fetch('http://localhost:5002/api/status/reevaluate');
+            const reevalResponse = await fetch(`${config.API_BASE_URL}/status/reevaluate`);
             const reevalData = await reevalResponse.json();
             
             console.log('Status da reavaliação:', reevalData);
@@ -220,7 +221,7 @@ const MatchesPage: React.FC = () => {
         search: { running: true, message: 'Iniciando busca de novas licitações...' }
       }));
       
-      const response = await fetch('http://localhost:5002/api/search-new-bids', {
+      const response = await fetch(`${config.API_BASE_URL}/search-new-bids`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -263,7 +264,7 @@ const MatchesPage: React.FC = () => {
         reevaluate: { running: true, message: 'Iniciando reavaliação de matches...' }
       }));
       
-      const response = await fetch('http://localhost:5002/api/reevaluate-bids', {
+      const response = await fetch(`${config.API_BASE_URL}/reevaluate-bids`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -313,7 +314,7 @@ const MatchesPage: React.FC = () => {
     const fetchEmpresas = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5002/api/matches/by-company');
+        const response = await fetch(`${config.API_BASE_URL}/matches/by-company`);
         const data = await response.json();
         
         if (data.success) {
@@ -340,7 +341,7 @@ const MatchesPage: React.FC = () => {
       
       // Por enquanto vamos buscar todos os matches e filtrar no frontend
       // TODO: Implementar filtro por empresa no backend
-      const response = await fetch('http://localhost:5002/api/matches/');
+      const response = await fetch(`${config.API_BASE_URL}/matches/`);
       const data = await response.json();
       
       if (data.success) {
@@ -453,8 +454,8 @@ const MatchesPage: React.FC = () => {
 
       // Buscar detalhes completos
       const [detailsResponse, itemsResponse] = await Promise.all([
-        fetch(`http://localhost:5002/api/bids/detail?pncp_id=${pncp_id}`),
-        fetch(`http://localhost:5002/api/bids/items?pncp_id=${pncp_id}`)
+        fetch(`${config.API_BASE_URL}/bids/detail?pncp_id=${pncp_id}`),
+        fetch(`${config.API_BASE_URL}/bids/items?pncp_id=${pncp_id}`)
       ]);
 
       const detailsData = await detailsResponse.json();
