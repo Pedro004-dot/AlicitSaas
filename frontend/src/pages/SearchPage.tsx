@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, X, MapPin, Calendar, DollarSign, FileText, Eye, ChevronDown } from 'lucide-react';
+import { config } from '../config/environment';
 
 interface LicitacaoItem {
   id: string;
@@ -77,7 +78,7 @@ const SearchPage: React.FC = () => {
     const fetchLicitacoes = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5002/api/bids/');
+        const response = await fetch(`${config.API_BASE_URL}/bids/`);
         const data = await response.json();
         
         if (data.success) {
@@ -205,8 +206,8 @@ const SearchPage: React.FC = () => {
     try {
       // Buscar detalhes completos
       const [detailsResponse, itemsResponse] = await Promise.all([
-        fetch(`http://localhost:5002/api/bids/detail?pncp_id=${licitacao.pncp_id}`),
-        fetch(`http://localhost:5002/api/bids/items?pncp_id=${licitacao.pncp_id}`)
+        fetch(`${config.API_BASE_URL}/bids/detail?pncp_id=${licitacao.pncp_id}`),
+        fetch(`${config.API_BASE_URL}/bids/items?pncp_id=${licitacao.pncp_id}`)
       ]);
 
       const detailsData = await detailsResponse.json();

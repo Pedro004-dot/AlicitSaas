@@ -1,7 +1,7 @@
 // Configuração de ambiente para a aplicação
 export const config = {
-  // URL base da API - vem da variável de ambiente ou fallback para desenvolvimento
-  API_BASE_URL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:5002/api',
+  // URL base da API - vem da variável de ambiente ou fallback para produção no Heroku
+  API_BASE_URL: process.env.REACT_APP_API_BASE_URL || 'https://alicit-backend-api-095d49caff4b.herokuapp.com/api',
   
   // Outras configurações que podem ser necessárias
   APP_VERSION: process.env.REACT_APP_VERSION || '1.0.0',
@@ -23,5 +23,6 @@ if (config.IS_DEVELOPMENT) {
   console.log('🔧 Configuração da API:', {
     baseUrl: config.API_BASE_URL,
     environment: process.env.NODE_ENV,
+    fallbackUrl: 'https://alicit-backend-api-095d49caff4b.herokuapp.com/api',
   });
 } 

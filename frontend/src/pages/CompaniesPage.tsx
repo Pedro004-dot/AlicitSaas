@@ -20,6 +20,7 @@ import {
 import { Company } from '../types';
 import { useApiData } from '../hooks/useApiData';
 import { useCompanyCrud } from '../hooks/useCompanyCrud';
+import { config } from '../config/environment';
 
 interface CompanyFormData {
   nome_fantasia: string;
@@ -76,7 +77,7 @@ const CompaniesPage: React.FC = () => {
   const fetchCompanies = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5002/api/companies/');
+      const response = await fetch(`${config.API_BASE_URL}/companies/`);
       const result = await response.json();
       
       if (result.success && result.data) {

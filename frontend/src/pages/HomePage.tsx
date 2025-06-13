@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useApiData } from '../hooks/useApiData';
 import { Match, Bid } from '../types';
+import { config } from '../config/environment';
 
 interface MetricCardProps {
   title: string;
@@ -85,7 +86,7 @@ const HomePage: React.FC<HomePageProps> = ({ onPageChange }) => {
       try {
         setLoadingActiveBids(true);
         const today = new Date().toISOString().split('T')[0];
-        const response = await fetch(`http://localhost:5002/api/bids/active?after=${today}`);
+        const response = await fetch(`${config.API_BASE_URL}/bids/active?after=${today}`);
         const result = await response.json();
         
         if (result.success) {
@@ -107,7 +108,7 @@ const HomePage: React.FC<HomePageProps> = ({ onPageChange }) => {
     const fetchRecentMatches = async () => {
       try {
         setLoadingRecentMatches(true);
-        const response = await fetch(`http://localhost:5002/api/matches/recent?limit=5`);
+        const response = await fetch(`${config.API_BASE_URL}/matches/recent?limit=5`);
         const result = await response.json();
         
         if (result.success) {
