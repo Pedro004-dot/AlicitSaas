@@ -4,7 +4,7 @@
 
 ### 🔗 Conexão com Backend
 ```bash
-REACT_APP_API_BASE_URL=https://alicit-backend-api-095d49caff4b.herokuapp.com/api
+REACT_APP_API_BASE_URL=https://alicitsaas-production.up.railway.app/api
 ```
 
 ### 📋 Opcionais (Informações da App)
@@ -23,15 +23,16 @@ NODE_ENV=production
 
 ## ⚠️ Importante
 
-- **REACT_APP_API_BASE_URL**: ✅ **JÁ CONFIGURADO** com `https://alicit-backend-api-095d49caff4b.herokuapp.com/api`
+- **REACT_APP_API_BASE_URL**: ✅ **JÁ CONFIGURADO** com `https://alicitsaas-production.up.railway.app/api`
 - **Formato**: Deve terminar com `/api` (sem barra final)
 - **HTTPS**: Use sempre HTTPS em produção
+- **Fallback**: Se não configurado, usa automaticamente a URL do Railway
 
 ## 🔄 Sequência de Deploy
 
-1. **Primeiro**: Deploy do backend no Heroku
-2. **Segundo**: Anote a URL do Heroku (https://seu-app.herokuapp.com)
-3. **Terceiro**: Configure `REACT_APP_API_BASE_URL=https://seu-app.herokuapp.com/api`
+1. **Primeiro**: Deploy do backend no Railway ✅ **CONCLUÍDO**
+2. **Segundo**: URL do Railway: `https://alicitsaas-production.up.railway.app`
+3. **Terceiro**: Configure `REACT_APP_API_BASE_URL=https://alicitsaas-production.up.railway.app/api` (opcional)
 4. **Quarto**: Deploy do frontend na Vercel
 5. **Quinto**: Anote a URL da Vercel
-6. **Sexto**: Atualize `CORS_ORIGINS` no Heroku com a URL da Vercel 
+6. **Sexto**: CORS já configurado para `https://alicit-saas.vercel.app` 
