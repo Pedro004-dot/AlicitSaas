@@ -4,8 +4,7 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile.railway"
 
 [deploy]
-# Configurações de deploy
-startCommand = "cd src && gunicorn -w 2 -b 0.0.0.0:$PORT --timeout 120 --keep-alive 60 --max-requests 1000 --max-requests-jitter 100 --preload app:app"
+# Configurações de deploy (CMD definido no Dockerfile)
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
