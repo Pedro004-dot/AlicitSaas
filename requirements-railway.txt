@@ -33,6 +33,9 @@ aiohttp==3.12.11
 PyMuPDF==1.26.1  # Mais leve que PyPDF2 + pdfplumber
 pypdfium2==4.30.1
 
+# File Type Detection
+python-magic==0.4.27
+
 # Redis & Cache
 redis==6.2.0
 
