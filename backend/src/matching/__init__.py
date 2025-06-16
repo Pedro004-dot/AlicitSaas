@@ -4,8 +4,8 @@ Pacote de matching de licitações com API do PNCP
 
 from .vectorizers import (
     BaseTextVectorizer,
-    OpenAITextVectorizer, 
-    SentenceTransformersVectorizer,
+    OpenAITextVectorizer,
+    VoyageAITextVectorizer, 
     HybridTextVectorizer,
     MockTextVectorizer,
     calculate_cosine_similarity,
@@ -36,8 +36,8 @@ from .matching_engine import (
 __all__ = [
     # Vectorizers
     'BaseTextVectorizer',
-    'OpenAITextVectorizer', 
-    'SentenceTransformersVectorizer',
+    'OpenAITextVectorizer',
+    'VoyageAITextVectorizer', 
     'HybridTextVectorizer',
     'MockTextVectorizer',
     'calculate_cosine_similarity',

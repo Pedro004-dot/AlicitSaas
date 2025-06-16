@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Módulo de vetorização de texto para matching de licitações
-Contém diferentes implementações de vetorização: OpenAI, SentenceTransformers, Híbrido e Mock
+Contém diferentes implementações de vetorização: OpenAI, VoyageAI, Híbrido e Mock
 """
 
 import os
@@ -130,7 +130,7 @@ class BaseTextVectorizer(ABC):
 class OpenAITextVectorizer(BaseTextVectorizer):
     """Vetorizador usando OpenAI Embeddings API - Melhor qualidade semântica"""
     
-    def __init__(self, model: str = "text-embedding-3-large"):
+    def __init__(self, model: str = "text-embedding-3-small"):
         self.model = model
         self.api_key = os.getenv('OPENAI_API_KEY')
         if not self.api_key:
@@ -221,120 +221,168 @@ class OpenAITextVectorizer(BaseTextVectorizer):
             return []
 
 
-class SentenceTransformersVectorizer(BaseTextVectorizer):
-    """Vetorizador usando Sentence Transformers (local, gratuito) - Para português"""
+class VoyageAITextVectorizer(BaseTextVectorizer):
+    """Vetorizador usando Voyage AI - Alta qualidade, baixo consumo de recursos, ideal para Railway"""
     
-    def __init__(self, model_name: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"):
-        """
-        Modelos testados para português:
-        - sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 (recomendado)
-        - sentence-transformers/all-MiniLM-L6-v2 (mais rápido)
-        - neuralmind/bert-base-portuguese-cased (específico para português)
-        """
-        try:
-            from sentence_transformers import SentenceTransformer
-            print(f"🔄 Carregando modelo Sentence Transformers: {model_name}...")
-            self.model = SentenceTransformer(model_name)
-            print(f"✅ Modelo carregado: {self.model.get_sentence_embedding_dimension()} dimensões")
-        except ImportError:
-            raise ImportError("sentence-transformers não instalado. Execute: pip install sentence-transformers")
-        except Exception as e:
-            print(f"❌ Erro ao carregar modelo: {e}")
-            raise
+    def __init__(self, model: str = "voyage-3-large"):
+        self.model = model
+        self.api_key = os.getenv('VOYAGE_API_KEY')
+        if not self.api_key:
+            raise ValueError("VOYAGE_API_KEY não encontrada nas variáveis de ambiente")
+        
+        # Headers para requisições
+        self.headers = {
+            'Authorization': f'Bearer {self.api_key}',
+            'Content-Type': 'application/json'
+        }
+        
+        # URL da API
+        self.url = "https://api.voyageai.com/v1/embeddings"
+        print(f"🚢 Voyage AI Embeddings inicializado - Modelo: {self.model}")
+        print(f"   💡 Vantagens: Zero consumo RAM/CPU local, embeddings 1024d, multilingual")
     
     def vectorize(self, text: str) -> List[float]:
-        """Vetoriza um único texto"""
+        """Vetoriza um único texto usando Voyage AI"""
         if not text or not text.strip():
             return []
         
+        # Preprocessar texto
         clean_text = self.preprocess_text(text)
         if not clean_text:
             return []
         
-        # Limitar tamanho (modelos BERT têm limite de tokens)
-        if len(clean_text) > 5000:
-            clean_text = clean_text[:5000] + "..."
+        # Limitar tamanho (Voyage AI limite: 120k tokens, sendo conservador)
+        if len(clean_text) > 30000:
+            clean_text = clean_text[:30000] + "..."
+        
+        payload = {
+            "model": self.model,
+            "input": [clean_text],  # Voyage expects array
+            "input_type": "document"  # "document" para conteúdo ou "query" para buscas
+        }
         
         try:
-            embedding = self.model.encode(clean_text, convert_to_numpy=True)
-            return embedding.tolist()
-        except Exception as e:
-            print(f"❌ Erro no SentenceTransformers: {e}")
+            response = requests.post(self.url, headers=self.headers, json=payload, timeout=30)
+            response.raise_for_status()
+            
+            data = response.json()
+            embedding = data['data'][0]['embedding']
+            
+            print(f"   🔢 Voyage AI embedding: {len(embedding)} dimensões")
+            return embedding
+            
+        except requests.exceptions.Timeout:
+            print(f"⏰ Timeout na API Voyage AI (30s)")
+            return []
+        except requests.exceptions.RequestException as e:
+            print(f"❌ Erro na API Voyage AI: {e}")
+            return []
+        except (KeyError, IndexError) as e:
+            print(f"❌ Erro no formato da resposta Voyage AI: {e}")
             return []
     
     def batch_vectorize(self, texts: List[str]) -> List[List[float]]:
-        """Vetoriza múltiplos textos de uma vez (mais eficiente)"""
+        """Vetoriza múltiplos textos em batch (muito mais eficiente)"""
         if not texts:
             return []
         
+        # Preprocessar textos
         clean_texts = []
         for text in texts:
             if text and text.strip():
                 clean_text = self.preprocess_text(text)
                 if clean_text:
                     # Limitar tamanho
-                    if len(clean_text) > 5000:
-                        clean_text = clean_text[:5000] + "..."
+                    if len(clean_text) > 30000:
+                        clean_text = clean_text[:30000] + "..."
                     clean_texts.append(clean_text)
         
         if not clean_texts:
             return []
         
+        # Voyage AI supports batch processing efficiently
+        payload = {
+            "model": self.model,
+            "input": clean_texts,
+            "input_type": "document"
+        }
+        
         try:
-            print(f"   🔄 Processando batch SentenceTransformers: {len(clean_texts)} textos...")
-            embeddings = self.model.encode(clean_texts, convert_to_numpy=True, show_progress_bar=True)
-            result = [embedding.tolist() for embedding in embeddings]
-            print(f"   ✅ Batch processado: {len(result)} embeddings de {len(result[0])} dimensões")
-            return result
-        except Exception as e:
-            print(f"❌ Erro no SentenceTransformers (batch): {e}")
+            print(f"   🔄 Processando batch Voyage AI: {len(clean_texts)} textos...")
+            response = requests.post(self.url, headers=self.headers, json=payload, timeout=120)
+            response.raise_for_status()
+            
+            data = response.json()
+            embeddings = [item['embedding'] for item in data['data']]
+            
+            print(f"   ✅ Batch Voyage AI: {len(embeddings)} embeddings de {len(embeddings[0])} dimensões")
+            return embeddings
+            
+        except requests.exceptions.Timeout:
+            print(f"⏰ Timeout no batch Voyage AI (120s)")
+            return []
+        except requests.exceptions.RequestException as e:
+            print(f"❌ Erro no batch Voyage AI: {e}")
+            return []
+        except (KeyError, IndexError) as e:
+            print(f"❌ Erro no formato do batch Voyage AI: {e}")
             return []
 
 
 class HybridTextVectorizer(BaseTextVectorizer):
-    """Sistema híbrido: OpenAI como primário, SentenceTransformers como fallback"""
+    """Sistema híbrido: VoyageAI como primário, OpenAI como fallback (otimizado para Railway)"""
     
     def __init__(self):
-        self.use_openai = bool(os.getenv('OPENAI_API_KEY'))
+        self.use_voyage = bool(os.getenv('VOYAGE_API_KEY'))
         
-        if self.use_openai:
+        if self.use_voyage:
             try:
-                self.primary = OpenAITextVectorizer()
-                print("🔥 Sistema Híbrido: OpenAI como vetorizador principal")
+                self.primary = VoyageAITextVectorizer()
+                print("🚢 Sistema Híbrido: Voyage AI como vetorizador principal (Railway optimized)")
+            except Exception as e:
+                print(f"⚠️  Falha ao inicializar Voyage AI: {e}")
+                self.use_voyage = False
+        
+        # Fallback para OpenAI se disponível
+        self.use_openai = bool(os.getenv('OPENAI_API_KEY'))
+        if not self.use_voyage and self.use_openai:
+            try:
+                self.fallback = OpenAITextVectorizer()
+                print("🔥 OpenAI carregado como fallback")
             except Exception as e:
                 print(f"⚠️  Falha ao inicializar OpenAI: {e}")
                 self.use_openai = False
         
-        if not self.use_openai:
-            print("⚠️  OPENAI_API_KEY não encontrada ou falha, usando SentenceTransformers")
-        
-        # Fallback sempre disponível
-        try:
-            self.fallback = SentenceTransformersVectorizer()
-            print("✅ SentenceTransformers carregado como fallback")
-        except Exception as e:
-            print(f"❌ Erro crítico: Não foi possível carregar nem OpenAI nem SentenceTransformers: {e}")
-            raise
+        # Se nenhum vetorizador está disponível, usar Mock como último recurso
+        if not self.use_voyage and not self.use_openai:
+            print("⚠️  Nem VOYAGE_API_KEY nem OPENAI_API_KEY encontradas")
+            print("🔄 Usando MockTextVectorizer como último recurso")
+            try:
+                self.fallback = MockTextVectorizer()
+                print("✅ MockTextVectorizer carregado como último recurso")
+            except Exception as e:
+                print(f"❌ Erro crítico: Não foi possível carregar nenhum vetorizador: {e}")
+                raise
     
     def vectorize(self, text: str) -> List[float]:
-        if self.use_openai:
+        if self.use_voyage:
             try:
                 result = self.primary.vectorize(text)
                 if result:  # Se sucesso, retorna
                     return result
             except Exception as e:
-                print(f"⚠️  OpenAI falhou, usando fallback: {e}")
+                print(f"⚠️  Voyage AI falhou, usando fallback: {e}")
         
         return self.fallback.vectorize(text)
     
     def batch_vectorize(self, texts: List[str]) -> List[List[float]]:
-        if self.use_openai:
+        if self.use_voyage:
             try:
                 result = self.primary.batch_vectorize(texts)
                 if result:  # Se sucesso, retorna
                     return result
             except Exception as e:
-                print(f"⚠️  OpenAI falhou, usando fallback: {e}")
+                print(f"⚠️  Voyage AI falhou, usando fallback: {e}")
         
         return self.fallback.batch_vectorize(texts)
 
@@ -344,7 +392,7 @@ class MockTextVectorizer(BaseTextVectorizer):
     
     def __init__(self):
         print("⚠️  AVISO: Usando MockTextVectorizer (DEPRECATED)")
-        print("   Para melhor performance, configure OPENAI_API_KEY ou use SentenceTransformers")
+        print("   Para melhor performance, configure VOYAGE_API_KEY ou OPENAI_API_KEY")
         
         # Categorias e suas palavras-chave EXPANDIDAS
         self.categories = {

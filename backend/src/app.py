@@ -52,7 +52,7 @@ def _configure_app(app: Flask, config: dict = None) -> None:
         'SUPABASE_ANON_KEY': os.getenv('SUPABASE_ANON_KEY'),  # Para operações públicas
         'DATABASE_URL': os.getenv('DATABASE_URL'),
         'LOG_LEVEL': os.getenv('LOG_LEVEL', 'INFO'),
-        'CORS_ORIGINS': os.getenv('CORS_ORIGINS', '*').split(','),
+        'CORS_ORIGINS': os.getenv('CORS_ORIGINS', 'https://alicit-saas.vercel.app,http://localhost:3000').split(','),
         'JSON_SORT_KEYS': False,
         'JSONIFY_PRETTYPRINT_REGULAR': True,
         # Configurações RAG
@@ -357,4 +357,7 @@ def main():
         sys.exit(1)
 
 if __name__ == '__main__':
-    main() 
+    main()
+
+# Criar instância da aplicação para gunicorn
+app = create_app() 

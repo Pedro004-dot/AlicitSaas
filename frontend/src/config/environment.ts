@@ -13,7 +13,7 @@ export const config = {
   // URL base da API - SEMPRE HTTPS para produção
   API_BASE_URL: (() => {
     const envUrl = process.env.REACT_APP_API_BASE_URL;
-    const fallbackUrl = 'https://alicitsaas-production.up.railway.app/api';
+    const fallbackUrl = 'http://localhost:5002/api';
     
     // Se há variável de ambiente, força HTTPS
     if (envUrl) {

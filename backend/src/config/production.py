@@ -44,9 +44,9 @@ class ProductionConfig:
     # RAG configurations
     RAG_CHUNK_SIZE = int(os.environ.get('RAG_CHUNK_SIZE', 800))
     RAG_CHUNK_OVERLAP = int(os.environ.get('RAG_CHUNK_OVERLAP', 100))
-    RAG_EMBEDDING_MODEL = os.environ.get('RAG_EMBEDDING_MODEL', 'sentence-transformers/all-MiniLM-L6-v2')
+    RAG_EMBEDDING_MODEL = os.environ.get('RAG_EMBEDDING_MODEL', 'voyage-3-large')
     RAG_CACHE_TTL = int(os.environ.get('RAG_CACHE_TTL', 3600))
     
     # Configurações do vetorizador
-    VECTORIZER_TYPE = os.environ.get('VECTORIZER_TYPE', 'sentence_transformers')
+    VECTORIZER_TYPE = os.environ.get('VECTORIZER_TYPE', 'hybrid')
     CLEAR_MATCHES_BEFORE_REEVALUATE = os.environ.get('CLEAR_MATCHES_BEFORE_REEVALUATE', 'true').lower() == 'true' 

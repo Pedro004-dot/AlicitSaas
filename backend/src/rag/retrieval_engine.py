@@ -5,7 +5,6 @@ import logging
 from typing import List, Dict, Any, Optional
 import time
 import numpy as np
-from sentence_transformers import CrossEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -20,53 +19,30 @@ class RetrievalEngine:
         self._load_reranker()
     
     def _load_reranker(self):
-        """Carrega modelo de reranking"""
-        try:
-            logger.info("🤖 Carregando modelo de reranking...")
-            
-            # Modelo gratuito para reranking
-            self.reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
-            
-            logger.info("✅ Modelo de reranking carregado")
-            
-        except Exception as e:
-            logger.warning(f"⚠️ Erro ao carregar reranker: {e}")
-            self.reranker = None
+        """Reranking desabilitado - usando apenas similaridade semântica"""
+        logger.info("⚠️  Reranking com CrossEncoder desabilitado (removido sentence-transformers)")
+        logger.info("💡 Usando apenas scores de similaridade semântica para ordenação")
+        self.reranker = None
     
     def rerank_chunks(self, query: str, chunks: List[Dict], top_k: int = 8) -> List[Dict]:
-        """Aplica reranking nos chunks recuperados"""
+        """Ordena chunks por similaridade semântica (reranking desabilitado)"""
         try:
-            if not self.reranker or len(chunks) <= top_k:
-                return chunks[:top_k]
+            logger.info(f"🔄 Ordenando {len(chunks)} chunks por similaridade semântica")
             
-            logger.info(f"🔄 Aplicando reranking em {len(chunks)} chunks")
-            
-            # Preparar pares query-chunk para reranking
-            query_chunk_pairs = []
+            # Usar score de similaridade existente como score final
             for chunk in chunks:
-                query_chunk_pairs.append([query, chunk['text']])
-            
-            # Calcular scores de reranking
-            rerank_scores = self.reranker.predict(query_chunk_pairs)
-            
-            # Combinar scores originais com reranking
-            for i, chunk in enumerate(chunks):
                 original_score = chunk.get('hybrid_score', chunk.get('similarity_score', 0))
-                rerank_score = float(rerank_scores[i])
-                
-                # Combinar scores (70% rerank + 30% original)
-                final_score = 0.7 * rerank_score + 0.3 * original_score
-                chunk['final_score'] = final_score
-                chunk['rerank_score'] = rerank_score
+                chunk['final_score'] = original_score
+                chunk['rerank_score'] = None  # Reranking desabilitado
             
-            # Reordenar por score final
-            reranked_chunks = sorted(chunks, key=lambda x: x['final_score'], reverse=True)
+            # Ordenar por score de similaridade
+            sorted_chunks = sorted(chunks, key=lambda x: x['final_score'], reverse=True)
             
-            logger.info(f"✅ Reranking aplicado, retornando top {top_k}")
-            return reranked_chunks[:top_k]
+            logger.info(f"✅ Chunks ordenados por similaridade, retornando top {top_k}")
+            return sorted_chunks[:top_k]
             
         except Exception as e:
-            logger.error(f"❌ Erro no reranking: {e}")
+            logger.error(f"❌ Erro na ordenação: {e}")
             return chunks[:top_k]
     
     def generate_response(self, query: str, context_chunks: List[Dict], 

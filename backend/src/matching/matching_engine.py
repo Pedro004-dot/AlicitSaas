@@ -11,7 +11,7 @@ import time
 from psycopg2.extras import DictCursor
 
 from .vectorizers import (
-    BaseTextVectorizer, OpenAITextVectorizer, SentenceTransformersVectorizer,
+    BaseTextVectorizer, OpenAITextVectorizer, VoyageAITextVectorizer,
     HybridTextVectorizer, MockTextVectorizer, calculate_enhanced_similarity
 )
 from .pncp_api import (
@@ -500,9 +500,9 @@ if __name__ == "__main__":
     
     # Menu de configuração do vectorizer
     print("\n🔧 Escolha o sistema de vetorização:")
-    print("1. Sistema Híbrido (OpenAI + SentenceTransformers fallback) - RECOMENDADO")
-    print("2. OpenAI Embeddings (alta qualidade, requer API key)")
-    print("3. SentenceTransformers (local, gratuito)")
+    print("1. Sistema Híbrido (VoyageAI + OpenAI fallback) - RECOMENDADO")
+    print("2. VoyageAI (otimizado para Railway)")
+    print("3. OpenAI Embeddings (alta qualidade, requer API key)")
     print("4. MockTextVectorizer (básico, apenas para teste)")
     
     vectorizer_choice = input("\nEscolha o vetorizador (1-4, padrão: 1): ").strip() or "1"
@@ -513,14 +513,12 @@ if __name__ == "__main__":
             print("\n🔥 Inicializando Sistema Híbrido...")
             vectorizer = HybridTextVectorizer()
         elif vectorizer_choice == "2":
+            print("\n🔥 Inicializando VoyageAI...")
+            vectorizer = VoyageAITextVectorizer()
+        elif vectorizer_choice == "3":
             print("\n🔥 Inicializando OpenAI Embeddings...")
             vectorizer = OpenAITextVectorizer()
-        elif vectorizer_choice == "3":
-            print("\n🔥 Inicializando SentenceTransformers...")
-            vectorizer = SentenceTransformersVectorizer()
-        elif vectorizer_choice == "4":
-            print("\n⚠️  Inicializando MockTextVectorizer (não recomendado)...")
-            vectorizer = MockTextVectorizer()
+        
         else:
             print(f"\n❌ Opção inválida '{vectorizer_choice}'. Usando Sistema Híbrido...")
             vectorizer = HybridTextVectorizer()

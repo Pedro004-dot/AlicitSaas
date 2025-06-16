@@ -46,15 +46,15 @@ class SystemService:
                 'description': 'Embeddings da OpenAI (requer API key)',
                 'enabled': bool(os.getenv('OPENAI_API_KEY'))
             },
-            'sentence_transformers': {
-                'name': 'SentenceTransformers',
-                'description': 'Modelos locais SentenceTransformers',
-                'enabled': True
+            'voyage': {
+                'name': 'Voyage AI',
+                'description': 'Embeddings Voyage AI (otimizado para Railway)',
+                'enabled': bool(os.getenv('VOYAGE_API_KEY'))
             },
             'hybrid': {
-                'name': 'Híbrido (OpenAI + SentenceTransformers)',
+                'name': 'Híbrido (Voyage AI + OpenAI)',
                 'description': 'Combinação de múltiplos vetorizadores',
-                'enabled': bool(os.getenv('OPENAI_API_KEY'))
+                'enabled': bool(os.getenv('VOYAGE_API_KEY')) or bool(os.getenv('OPENAI_API_KEY'))
             },
             'mock': {
                 'name': 'Mock Vectorizer',
@@ -285,9 +285,9 @@ class SystemService:
                     elif vectorizer_type == 'openai':
                         from matching.vectorizers import OpenAITextVectorizer
                         vectorizer = OpenAITextVectorizer()
-                    elif vectorizer_type == 'sentence_transformers':
-                        from matching.vectorizers import SentenceTransformersVectorizer
-                        vectorizer = SentenceTransformersVectorizer()
+                    elif vectorizer_type == 'voyage':
+                        from matching.vectorizers import VoyageAITextVectorizer
+                        vectorizer = VoyageAITextVectorizer()
                     else:
                         from matching.vectorizers import MockTextVectorizer
                         vectorizer = MockTextVectorizer()
@@ -361,9 +361,9 @@ class SystemService:
                     elif vectorizer_type == 'openai':
                         from matching.vectorizers import OpenAITextVectorizer
                         vectorizer = OpenAITextVectorizer()
-                    elif vectorizer_type == 'sentence_transformers':
-                        from matching.vectorizers import SentenceTransformersVectorizer
-                        vectorizer = SentenceTransformersVectorizer()
+                    elif vectorizer_type == 'voyage':
+                        from matching.vectorizers import VoyageAITextVectorizer
+                        vectorizer = VoyageAITextVectorizer()
                     else:
                         from matching.vectorizers import MockTextVectorizer
                         vectorizer = MockTextVectorizer()

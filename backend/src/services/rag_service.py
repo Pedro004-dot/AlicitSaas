@@ -133,7 +133,10 @@ class RAGService:
             total_chunks = 0
             processed_docs = 0
             
-            for documento in documentos:
+            logger.info(f"📋 Processando {len(documentos)} documentos para vetorização...")
+            
+            for idx, documento in enumerate(documentos, 1):
+                logger.info(f"📄 Processando documento {idx}/{len(documentos)}: {documento['titulo']}")
                 # Verificar se já tem chunks vetorizados
                 existing_chunks = self.vector_store.count_document_chunks(documento['id'])
                 if existing_chunks > 0:
@@ -167,9 +170,43 @@ class RAGService:
                         self._update_document_status(documento['id'], 'erro')
                         continue
                     
-                    # Gerar embeddings
+                    # Gerar embeddings com fallback
                     chunk_texts = [chunk.text for chunk in chunks]
                     embeddings = self.embedding_service.generate_embeddings(chunk_texts)
+                    
+                    # Verificar se embeddings foram gerados com sucesso
+                    if not embeddings or len(embeddings) != len(chunks):
+                        logger.warning(f"⚠️ VoyageAI falhou para {documento['titulo']}, tentando fallback OpenAI...")
+                        
+                        # Tentar fallback com OpenAI (se disponível)
+                        try:
+                            from matching.vectorizers import OpenAITextVectorizer
+                            openai_vectorizer = OpenAITextVectorizer()
+                            embeddings = []
+                            
+                            # Processar em lotes menores para OpenAI
+                            batch_size = 50
+                            for i in range(0, len(chunk_texts), batch_size):
+                                batch = chunk_texts[i:i + batch_size]
+                                batch_embeddings = openai_vectorizer.vectorize_batch(batch)
+                                if batch_embeddings:
+                                    embeddings.extend(batch_embeddings)
+                                else:
+                                    logger.error(f"❌ OpenAI fallback também falhou no batch {i//batch_size + 1}")
+                                    break
+                            
+                            if len(embeddings) != len(chunks):
+                                logger.error(f"❌ Fallback OpenAI falhou para {documento['titulo']}")
+                                logger.error(f"📊 Esperado: {len(chunks)} embeddings, Recebido: {len(embeddings)}")
+                                self._update_document_status(documento['id'], 'erro_embedding')
+                                continue
+                            else:
+                                logger.info(f"✅ Fallback OpenAI funcionou para {documento['titulo']}")
+                                
+                        except Exception as fallback_error:
+                            logger.error(f"❌ Fallback OpenAI falhou: {fallback_error}")
+                            self._update_document_status(documento['id'], 'erro_embedding')
+                            continue
                     
                     # Converter chunks para dicionários
                     chunk_dicts = []
