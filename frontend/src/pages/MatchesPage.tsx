@@ -1,44 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Building, FileText, Eye, X, MapPin, DollarSign, ArrowLeft, Users, Award, Target, Search, RefreshCw, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 import { config } from '../config/environment';
-
-// Reutilizando as interfaces da SearchPage
-interface LicitacaoItem {
-  id: string;
-  numero_item: number;
-  descricao: string;
-  quantidade: string;
-  unidade_medida: string;
-  valor_unitario_estimado: string;
-  valor_total?: string;
-}
-
-interface Licitacao {
-  id: string;
-  pncp_id: string;
-  objeto_compra: string;
-  uf: string;
-  data_encerramento_proposta: string | null;
-  valor_total_estimado: number;
-  status: string;
-  data_publicacao: string | null;
-  modalidade_nome: string;
-  razao_social?: string;  // Nova razão social do órgão licitante
-  // Novos campos da unidadeOrgao
-  uf_nome?: string;
-  nome_unidade?: string;
-  municipio_nome?: string;
-  codigo_ibge?: string;
-  codigo_unidade?: string;
-  situacao_compra_nome: string;
-  processo: string;
-  orgao_entidade: any;
-  unidade_orgao: any;
-  informacao_complementar: string;
-  itens?: LicitacaoItem[];
-  status_calculado?: string;
-  valor_display?: number | string;
-}
+import LicitacaoModal from '../components/LicitacaoModal';
+import { Licitacao } from '../types/licitacao';
 
 interface EmpresaMatch {
   empresa_id: string;
@@ -60,20 +24,13 @@ interface Match {
   data_match: string;
   // Dados da licitação no match
   licitacao_id: string;
+  licitacao_pncp_id?: string; // O PNCP ID pode estar em um campo separado
   licitacao_objeto: string;
   licitacao_uf: string | null;
   licitacao_valor: string;
   licitacao_data_publicacao: string | null;
   licitacao_modalidade: string | null;
 }
-
-// Mapeamento temporário de licitacao_id para pncp_id (até implementarmos no backend)
-const LICITACAO_ID_TO_PNCP_ID: Record<string, string> = {
-  'a8b53b1c-1fb1-4987-a171-ec66cf8f7ce7': '63606479000124-1-000341/2025',
-  '9bdb6365-6a56-4e5e-bbe0-d0c61683427b': '18375887000168-1-000004/2025',
-  '262d6392-7b12-4109-b7e5-c22ed1beb626': '24851511000185-1-000174/2025',
-  '06b3de83-6f65-4942-9a91-51435201d78c': '13864377000130-1-000942/2025'
-};
 
 const MatchesPage: React.FC = () => {
   const [empresas, setEmpresas] = useState<EmpresaMatch[]>([]);
@@ -87,6 +44,8 @@ const MatchesPage: React.FC = () => {
   // Estados para os botões de match
   const [searchingNewBids, setSearchingNewBids] = useState(false);
   const [reevaluatingBids, setReevaluatingBids] = useState(false);
+
+
   const [processStatus, setProcessStatus] = useState<{
     search: { running: boolean; message: string; };
     reevaluate: { running: boolean; message: string; };
@@ -349,6 +308,7 @@ const MatchesPage: React.FC = () => {
         const matchesFiltered = data.data.filter((match: any) => 
           match.empresa_id === empresa.empresa_id
         );
+        
         setMatchesEmpresa(matchesFiltered);
       } else {
         setError(data.message || 'Erro ao carregar matches');
@@ -367,46 +327,7 @@ const MatchesPage: React.FC = () => {
     setMatchesEmpresa([]);
   };
 
-  // Funções auxiliares (reutilizadas da SearchPage)
-  const getStatusLicitacao = (licitacao: Licitacao) => {
-    if (licitacao.status_calculado) {
-      return licitacao.status_calculado;
-    }
-    
-    if (!licitacao.data_encerramento_proposta) return 'Indefinido';
-    
-    const hoje = new Date();
-    const dataEncerramentoDate = new Date(licitacao.data_encerramento_proposta);
-    const umDiaAntes = new Date(dataEncerramentoDate);
-    umDiaAntes.setDate(umDiaAntes.getDate() - 1);
-    
-    if (hoje > umDiaAntes) {
-      return 'Fechada';
-    } else {
-      return 'Ativa';
-    }
-  };
-
-  const formatarValor = (licitacao: Licitacao) => {
-    if (licitacao.valor_display !== undefined) {
-      if (licitacao.valor_display === 'Sigiloso') {
-        return 'Sigiloso';
-      }
-      if (typeof licitacao.valor_display === 'number') {
-        return new Intl.NumberFormat('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        }).format(licitacao.valor_display);
-      }
-    }
-    
-    if (!licitacao.valor_total_estimado || licitacao.valor_total_estimado === 0) return 'Sigiloso';
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(licitacao.valor_total_estimado);
-  };
-
+  // Funções auxiliares necessárias para a página
   const formatarValorNumerico = (valor: number) => {
     if (!valor || valor === 0) return 'R$ 0,00';
     return new Intl.NumberFormat('pt-BR', {
@@ -440,57 +361,65 @@ const MatchesPage: React.FC = () => {
     return tipos[type as keyof typeof tipos] || type;
   };
 
-  // Abrir modal com detalhes da licitação (reutilizado da SearchPage)
+  // Abrir modal com detalhes da licitação (seguindo padrão do SearchPage)
   const abrirModal = async (match: Match) => {
+    // Primeiro criar um objeto básico e definir no estado (para o modal abrir)
+    const licitacaoBasica: Licitacao = {
+      id: match.licitacao_id,
+      pncp_id: match.licitacao_pncp_id || match.licitacao_id,
+      objeto_compra: match.licitacao_objeto,
+      uf: match.licitacao_uf || '',
+      data_encerramento_proposta: null,
+      valor_total_estimado: parseFloat(match.licitacao_valor) || 0,
+      status: 'Ativa',
+      data_publicacao: match.licitacao_data_publicacao,
+      modalidade_nome: match.licitacao_modalidade || '',
+      situacao_compra_nome: '',
+      processo: '',
+      orgao_entidade: null,
+      unidade_orgao: null,
+      informacao_complementar: 'Dados básicos da licitação obtidos através do match.',
+      itens: []
+    };
+
+    setSelectedLicitacao(licitacaoBasica);
     setModalLoading(true);
 
     try {
-      // Usar o mapeamento para obter o pncp_id
-      const pncp_id = LICITACAO_ID_TO_PNCP_ID[match.licitacao_id];
+      // Primeiro buscar o pncp_id correto usando o licitacao_id
+      const bidResponse = await fetch(`${config.API_BASE_URL}/bids/`);
+      const bidData = await bidResponse.json();
       
-      if (!pncp_id) {
-        throw new Error('PNCP ID não encontrado para esta licitação');
+      let realPncpId = match.licitacao_pncp_id || match.licitacao_id;
+      
+      if (bidData.success) {
+        const licitacao = bidData.data.find((l: any) => l.id === match.licitacao_id);
+        if (licitacao && licitacao.pncp_id) {
+          realPncpId = licitacao.pncp_id;
+        }
       }
 
-      // Buscar detalhes completos
+      // Agora tentar buscar detalhes completos com o pncp_id correto
       const [detailsResponse, itemsResponse] = await Promise.all([
-        fetch(`${config.API_BASE_URL}/bids/detail?pncp_id=${pncp_id}`),
-        fetch(`${config.API_BASE_URL}/bids/items?pncp_id=${pncp_id}`)
+        fetch(`${config.API_BASE_URL}/bids/detail?pncp_id=${encodeURIComponent(realPncpId)}`),
+        fetch(`${config.API_BASE_URL}/bids/items?pncp_id=${encodeURIComponent(realPncpId)}`)
       ]);
 
       const detailsData = await detailsResponse.json();
       const itemsData = await itemsResponse.json();
 
-      if (detailsData.success) {
+      if (detailsResponse.ok && detailsData.success) {
+        // Se conseguiu buscar detalhes completos, atualizar com dados da API
         const licitacaoCompleta = {
           ...detailsData.data,
           itens: itemsData.success ? itemsData.data : []
         };
         setSelectedLicitacao(licitacaoCompleta);
-      } else {
-        throw new Error('Erro ao buscar detalhes da licitação');
       }
+      // Se não conseguiu buscar da API, mantém os dados básicos que já foram definidos
     } catch (err) {
-      console.error('Erro ao buscar detalhes:', err);
-      // Fallback: criar um objeto básico com os dados do match
-      const licitacaoBasica: Licitacao = {
-        id: match.licitacao_id,
-        pncp_id: LICITACAO_ID_TO_PNCP_ID[match.licitacao_id] || match.licitacao_id,
-        objeto_compra: match.licitacao_objeto,
-        uf: match.licitacao_uf || '',
-        data_encerramento_proposta: null,
-        valor_total_estimado: parseFloat(match.licitacao_valor) || 0,
-        status: 'Ativa',
-        data_publicacao: match.licitacao_data_publicacao,
-        modalidade_nome: match.licitacao_modalidade || '',
-        situacao_compra_nome: '',
-        processo: '',
-        orgao_entidade: null,
-        unidade_orgao: null,
-        informacao_complementar: '',
-        itens: []
-      };
-      setSelectedLicitacao(licitacaoBasica);
+      // Em caso de erro, mantém os dados básicos que já foram definidos
+      console.error('Erro ao buscar detalhes completos:', err);
     } finally {
       setModalLoading(false);
     }
@@ -844,142 +773,13 @@ const MatchesPage: React.FC = () => {
         )}
       </div>
 
-      {/* Modal de detalhes da licitação (reutilizado da SearchPage) */}
-      {selectedLicitacao && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Header do modal */}
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900">
-                Detalhes da Licitação
-              </h2>
-              <button
-                onClick={() => setSelectedLicitacao(null)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-
-            {/* Conteúdo do modal */}
-            <div className="p-6">
-              {modalLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
-                  <p className="mt-2 text-gray-600">Carregando detalhes...</p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {/* Informações básicas */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Informações Gerais</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">PNCP ID</label>
-                        <p className="text-sm text-gray-900">{selectedLicitacao.pncp_id}</p>
-                      </div>
-                      <div>
-                                        <label className="block text-sm font-medium text-gray-700">Órgão Licitante</label>
-                <div className="text-sm text-gray-900 space-y-1">
-                  <p className="font-medium">{selectedLicitacao.nome_unidade || selectedLicitacao.razao_social || 'Não informado'}</p>
-                  {selectedLicitacao.municipio_nome && selectedLicitacao.uf_nome && (
-                    <p className="text-xs text-gray-600">📍 {selectedLicitacao.municipio_nome} - {selectedLicitacao.uf_nome}</p>
-                  )}
-                </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Data de Publicação</label>
-                        <p className="text-sm text-gray-900">{formatarData(selectedLicitacao.data_publicacao)}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Data de Encerramento</label>
-                        <p className="text-sm text-gray-900">{formatarData(selectedLicitacao.data_encerramento_proposta)}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Valor Total</label>
-                        <p className="text-sm text-gray-900 font-medium">{formatarValor(selectedLicitacao)}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Status</label>
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            getStatusLicitacao(selectedLicitacao) === 'Ativa'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}
-                        >
-                          {getStatusLicitacao(selectedLicitacao)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Objeto */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Objeto</h3>
-                    <p className="text-gray-700 leading-relaxed">{selectedLicitacao.objeto_compra}</p>
-                  </div>
-
-                  {/* Informações complementares */}
-                  {selectedLicitacao.informacao_complementar && (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Informações Complementares</h3>
-                      <p className="text-gray-700 leading-relaxed">{selectedLicitacao.informacao_complementar}</p>
-                    </div>
-                  )}
-
-                  {/* Itens */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">
-                      Itens da Licitação ({selectedLicitacao.itens?.length || 0})
-                    </h3>
-                    
-                    {selectedLicitacao.itens && selectedLicitacao.itens.length > 0 ? (
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantidade</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unidade</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Unit.</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Total</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-gray-200">
-                            {selectedLicitacao.itens.map((item, index) => {
-                              const valorUnitario = parseFloat(item.valor_unitario_estimado) || 0;
-                              const quantidade = parseFloat(item.quantidade) || 0;
-                              const valorTotal = valorUnitario * quantidade;
-                              
-                              return (
-                                <tr key={index} className="hover:bg-gray-50">
-                                  <td className="px-4 py-3 text-sm text-gray-900">{item.numero_item}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-900 max-w-xs truncate">{item.descricao}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-900">{quantidade}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-900">{item.unidade_medida}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-900">{formatarValorNumerico(valorUnitario)}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-900 font-medium">{formatarValorNumerico(valorTotal)}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 bg-gray-50 rounded-lg">
-                        <FileText className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-500">Nenhum item encontrado para esta licitação</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal de detalhes da licitação */}
+      <LicitacaoModal
+        selectedLicitacao={selectedLicitacao}
+        modalLoading={modalLoading}
+        onClose={() => setSelectedLicitacao(null)}
+        showAnaliseButton={false}
+      />
     </div>
   );
 };

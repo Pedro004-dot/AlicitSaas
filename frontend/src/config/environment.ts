@@ -16,9 +16,9 @@ export const config = {
     const fallbackUrl = 'http://localhost:5002/api';
     
     // Se há variável de ambiente, força HTTPS
-    if (envUrl) {
-      return envUrl.replace('http://', 'https://');
-    }
+    // if (envUrl) {
+    //   return envUrl.replace('http://', 'https://');
+    // }
     
     return fallbackUrl;
   })(),

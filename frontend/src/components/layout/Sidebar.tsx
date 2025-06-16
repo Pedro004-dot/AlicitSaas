@@ -9,7 +9,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import logoAlicit from '../../assets/logoAlicit.jpeg';
+import logoAlicit from '../../assets/logoAlicitDegrade.png';
 
 interface SidebarProps {
   currentPage: string;
@@ -134,11 +134,11 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
           <div className="flex items-center justify-between">
             {/* Logo/Título */}
             <div className={`flex items-center space-x-3 ${!isExpanded && 'justify-center'}`}>
-              <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+              <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-white">
                 <img 
                   src={logoAlicit} 
                   alt="Alicit Logo" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain p-1"
                 />
               </div>
               {isExpanded && (
