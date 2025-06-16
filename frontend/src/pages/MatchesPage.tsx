@@ -778,7 +778,7 @@ const MatchesPage: React.FC = () => {
         selectedLicitacao={selectedLicitacao}
         modalLoading={modalLoading}
         onClose={() => setSelectedLicitacao(null)}
-        showAnaliseButton={false}
+        showAnaliseButton={true}
       />
     </div>
   );
