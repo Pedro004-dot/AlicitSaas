@@ -23,10 +23,17 @@ NODE_ENV=production
 
 ## ⚠️ Importante
 
-- **REACT_APP_API_BASE_URL**: ✅ **JÁ CONFIGURADO** com `https://alicitsaas-production.up.railway.app/api`
+- **REACT_APP_API_BASE_URL**: ✅ **DEVE SER HTTPS** - `https://alicitsaas-production.up.railway.app/api`
 - **Formato**: Deve terminar com `/api` (sem barra final)
-- **HTTPS**: Use sempre HTTPS em produção
-- **Fallback**: Se não configurado, usa automaticamente a URL do Railway
+- **HTTPS**: Use sempre HTTPS em produção (obrigatório para Vercel)
+- **Fallback**: Se não configurado, usa automaticamente a URL HTTPS do Railway
+
+## 🚨 **ATENÇÃO: ERRO COMUM**
+
+❌ **NUNCA use HTTP:** `http://alicitsaas-production.up.railway.app/api`  
+✅ **SEMPRE use HTTPS:** `https://alicitsaas-production.up.railway.app/api`
+
+**O Vercel bloqueia requisições HTTP por segurança!**
 
 ## 🔄 Sequência de Deploy
 
@@ -35,4 +42,12 @@ NODE_ENV=production
 3. **Terceiro**: Configure `REACT_APP_API_BASE_URL=https://alicitsaas-production.up.railway.app/api` (opcional)
 4. **Quarto**: Deploy do frontend na Vercel
 5. **Quinto**: Anote a URL da Vercel
-6. **Sexto**: CORS já configurado para `https://alicit-saas.vercel.app` 
+6. **Sexto**: CORS já configurado para `https://alicit-saas.vercel.app`
+
+## 🔧 **Solução de Problemas**
+
+Se você está vendo erros de "insecure content" ou "blocked", verifique:
+
+1. **Variável de ambiente no Vercel** está usando HTTPS
+2. **Não há cache** do navegador com URL HTTP antiga
+3. **Redeploy** do frontend após mudanças 
