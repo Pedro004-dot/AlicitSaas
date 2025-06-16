@@ -1,0 +1,55 @@
+[build]
+# Use Dockerfile otimizado para Railway
+builder = "dockerfile"
+dockerfilePath = "Dockerfile.railway"
+
+[deploy]
+# Configurações de deploy
+startCommand = "cd src && gunicorn -w 2 -b 0.0.0.0:$PORT --timeout 120 --keep-alive 60 --max-requests 1000 --max-requests-jitter 100 --preload app:app"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+# Configurações de recursos (Railway limits)
+[deploy.resources]
+# Railway Hobby Plan limits
+memory = "1GB"
+cpu = "1vCPU"
+
+# Variáveis de ambiente necessárias
+[environments.production.variables]
+FLASK_ENV = "production"
+FLASK_DEBUG = "false"
+LOG_LEVEL = "INFO"
+VECTORIZER_TYPE = "hybrid"
+CORS_ORIGINS = "https://alicit-saas.vercel.app,http://localhost:3000"
+
+# Configurações específicas do Railway
+RAILWAY_ENVIRONMENT = "production"
+PYTHONUNBUFFERED = "1"
+PYTHONDONTWRITEBYTECODE = "1"
+
+# Configurações de timeout para Railway
+GUNICORN_TIMEOUT = "120"
+GUNICORN_WORKERS = "2"
+
+# ===============================================
+# VARIÁVEIS SENSÍVEIS (configurar no Railway UI):
+# ===============================================
+# DATABASE_URL = "postgresql://..."
+# SUPABASE_URL = "https://..."
+# SUPABASE_SERVICE_KEY = "..."
+# SUPABASE_ANON_KEY = "..."
+# OPENAI_API_KEY = "sk-..."
+# VOYAGE_API_KEY = "pa-..."
+# SECRET_KEY = "..."
+# REDIS_URL = "redis://..."
+# ===============================================
+
+[environments.staging]
+# Configurações para staging (opcional)
+[environments.staging.variables]
+FLASK_ENV = "staging"
+FLASK_DEBUG = "true"
+LOG_LEVEL = "DEBUG" 
